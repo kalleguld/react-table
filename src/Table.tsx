@@ -1,8 +1,8 @@
 import React, { useMemo } from "react";
 import { Prop, useProp } from '@kalleguld/react-props';
-import { Column } from "./Column";
-import { Props } from "./Props";
-import { SortState } from "./SortState";
+import type { Column } from "./Column";
+import type { Props } from "./Props";
+import type { SortState } from "./SortState";
 
 export function Table<T>(props: Props<T>){
 

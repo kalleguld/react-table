@@ -1,4 +1,5 @@
 import React from "react";
+import { Sorter } from "./Sorter";
 
 export interface Column<T>{
     className?: string;
@@ -6,5 +7,5 @@ export interface Column<T>{
     content: (t: T) => React.ReactNode,
     header?: React.ReactNode;
     footer?: React.ReactNode;
-    sorter?: (a: T, b:T) => number;
+    sorter?: Sorter<T>;
 }

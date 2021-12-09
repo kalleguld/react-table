@@ -1,5 +1,5 @@
 import React from "react";
-import { Column } from "./Column";
+import type { Column } from "./Column";
 
 export interface Props<T> extends React.TableHTMLAttributes<HTMLTableElement> {
     cols: Column<T>[];
