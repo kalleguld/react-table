@@ -14,41 +14,51 @@ export function Table<T>(props: Props<T>){
     } = props;
 
     const sortState = useProp<SortState>();
+
+    //number rows, so we have their original index before sorting
+    const numberedRows = useMemo(() => {
+        return rows.map((row, idx) => ({row, idx}));
+    },[rows]);
+
     const sortedRows = useMemo(() => {
         if (!sortState.value){
-            return rows;
+            return numberedRows;
         }
         let sorter = cols[sortState.value.colIndex]?.sorter;
         if (!sorter){
-            return rows;
+            return numberedRows;
         }
         const actualSorter = sortState.value.reverse
             ? (a:T,b:T) => -sorter!(a,b)
             : sorter;
         
-        const result = [...rows];
-        result.sort(actualSorter);
+        const result = [...numberedRows];
+        result.sort((a, b) => actualSorter(a.row, b.row));
         return result;
         
-    }, [cols, rows, sortState.value?.colIndex, sortState.value?.reverse]);
+    }, [cols, numberedRows, sortState.value?.colIndex, sortState.value?.reverse]);
 
     return (
         <table {...rest}>
-            <colgroup>
-                {cols.map(getCol)}
-            </colgroup>
+            
+            {getCols(cols)}
 
             {getHeaders(cols, sortState)}
 
             {getRows(cols, sortedRows, rowKey)}
 
             {getFooters(cols)}
+
         </table>
-
     );
-
 }
-
+function getCols<T>(cols: Column<T>[]): React.ReactNode {
+    return (
+        <colgroup>
+            {cols.map(getCol)}
+        </colgroup>
+    )
+}
 
 function getCol<T>(col: Column<T>): React.ReactNode{
     return (<col className={col.className} />);
@@ -101,13 +111,19 @@ function sortBy<T>(col: Column<T>, idx: number, sortState: Prop<SortState | unde
         });
     }
 }
-function getRows<T>(cols: Column<T>[], sortedRows: T[], rowKey: (t: T) => string | number): React.ReactNode {
+function getRows<T>(
+    cols: Column<T>[], 
+    sortedRows: {row:T, idx:number}[], 
+    rowKey?: (t: T) => string | number
+): React.ReactNode {
     return (
         <tbody>
-            {sortedRows.map(r => getRow(cols, r, rowKey(r)))}
+            {sortedRows.map(r => getRow(cols, r.row, rowKey ? rowKey(r.row) : r.idx))}
         </tbody>
     );
 }
+
+
 
 function getRow<T>(cols: Column<T>[], row: T, key: string|number): React.ReactNode{
     return (
@@ -124,6 +140,7 @@ function getCell<T>(col: Column<T>, row: T): any {
         </td>
     );
 }
+
 function getFooters<T>(cols: Column<T>[]): React.ReactNode {
     if (!cols.some(col => col.footer))
         return;
