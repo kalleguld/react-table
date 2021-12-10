@@ -10,10 +10,10 @@ table.table th::after {
     text-align: start;
   }
   table.table th.sortable {
-    cursor:n-resize;
+    cursor:s-resize;
   }
   table.table th.sortable.sorted:not(.sorted-reverse) {
-    cursor:s-resize;
+    cursor:n-resize;
   }
   table.table th.sorted::after{
     visibility: visible;
