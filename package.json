@@ -1,13 +1,13 @@
 {
   "name": "@kalleguld/react-table",
   "version": "0.0.3",
-  "description": "A <table> for react",
+  "description": "A <table /> for react",
   "main": "dist/index.js",
   "author": "kalleguld",
   "license": "ISC",
   "repository": {
     "type": "git",
-    "url": "https://github.com/kalleguld/react-component-template"
+    "url": "https://github.com/kalleguld/react-table"
   },
   "scripts": {
     "test": "jest --passWithNoTests",
