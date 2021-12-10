@@ -8,4 +8,5 @@ export interface Column<T>{
     header?: React.ReactNode;
     footer?: React.ReactNode;
     sorter?: Sorter<T>;
+    isKey?: boolean;
 }

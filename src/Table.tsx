@@ -82,6 +82,9 @@ function getHeader<T>(col: Column<T>, idx: number, sortState: Prop<SortState|und
     if (col.className){
         classes.push(col.className);
     }
+    if (col.sorter){
+        classes.push('sortable');
+    }
     if (idx === sortState.value?.colIndex){
         classes.push('sorted');
         if (sortState.value?.reverse){
@@ -91,6 +94,7 @@ function getHeader<T>(col: Column<T>, idx: number, sortState: Prop<SortState|und
     return (
         <th className={classes.join(' ')} 
             onClick={sortBy(col, idx, sortState)}
+            scope="col"
         >
             {col.header}
         </th>
@@ -134,6 +138,13 @@ function getRow<T>(cols: Column<T>[], row: T, key: string|number): React.ReactNo
 }
 
 function getCell<T>(col: Column<T>, row: T): any {
+    if (col.isKey){
+        return (
+            <th key={col.key} scope="row">
+                {col.content(row)}
+            </th>
+        );
+    }
     return (
         <td key={col.key}>
             {col.content(row)}
