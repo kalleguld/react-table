@@ -13,7 +13,8 @@ export function Table<T>(props: Props<T>){
         ...rest
     } = props;
 
-    const sortState = useProp<SortState>();
+    const internalSortState = useProp<SortState>();
+    const sortState = props.sortState ?? internalSortState;
 
     //number rows, so we have their original index before sorting
     const numberedRows = useMemo(() => {
