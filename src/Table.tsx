@@ -27,7 +27,7 @@ export function Table<T>(props: Props<T>){
             : sorter;
         
         const result = [...rows];
-        result.sort(sorter);
+        result.sort(actualSorter);
         return result;
         
     }, [cols, rows, sortState.value?.colIndex, sortState.value?.reverse]);
