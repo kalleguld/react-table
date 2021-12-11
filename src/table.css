@@ -6,7 +6,7 @@ table.table th::after {
     font-weight: lighter;
     padding-left:.3em;
   }
-  table.table thead th{
+  table.table th{
     text-align: start;
   }
   table.table th.sortable {
