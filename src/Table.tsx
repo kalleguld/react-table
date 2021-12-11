@@ -37,7 +37,7 @@ export function Table<T>(props: Props<T>){
         result.sort((a, b) => actualSorter(a.row, b.row));
         return result;
         
-    }, [cols, numberedRows, sortState.value?.colIndex, sortState.value?.reverse]);
+    }, [cols, numberedRows, sortState.value]);
 
     return (
         <table {...rest}>
@@ -123,32 +123,32 @@ function getRows<T>(
 ): React.ReactNode {
     return (
         <tbody>
-            {sortedRows.map(r => getRow(cols, r.row, rowKey ? rowKey(r.row) : r.idx))}
+            {sortedRows.map(r => getRow(cols, r.row, r.idx, rowKey ? rowKey(r.row) : r.idx))}
         </tbody>
     );
 }
 
 
 
-function getRow<T>(cols: Column<T>[], row: T, key: string|number): React.ReactNode{
+function getRow<T>(cols: Column<T>[], row: T, rowIndex: number, key: string|number): React.ReactNode{
     return (
         <tr key={key}>
-            {cols.map(col => getCell(col, row))}
+            {cols.map(col => getCell(col, row, rowIndex))}
         </tr>
     );
 }
 
-function getCell<T>(col: Column<T>, row: T): any {
+function getCell<T>(col: Column<T>, row: T, rowIndex: number): any {
     if (col.isKey){
         return (
             <th key={col.key} scope="row">
-                {col.content(row)}
+                {col.content(row, rowIndex)}
             </th>
         );
     }
     return (
         <td key={col.key}>
-            {col.content(row)}
+            {col.content(row, rowIndex)}
         </td>
     );
 }
