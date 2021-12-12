@@ -139,13 +139,6 @@ function getRow<T>(cols: Column<T>[], row: T, rowIndex: number, key: string|numb
 }
 
 function getCell<T>(col: Column<T>, row: T, rowIndex: number): any {
-    if (col.isKey){
-        return (
-            <th key={col.key} scope="row">
-                {col.content(row, rowIndex)}
-            </th>
-        );
-    }
     return (
         <td key={col.key}>
             {col.content(row, rowIndex)}

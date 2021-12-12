@@ -30,18 +30,21 @@ export function PersonTable() {
         {name: 'James Hoffmann', subs:1090000, topic:'Coffee'},
         {name: 'RMTransit', subs:69000, topic:'Transit'}
     ];
+    const formatNumber = new Intl.NumberFormat().format;
     const columns: Table.Column<Person>[] = [
         { key:'name', 
             header: 'Name', 
             content: p => p.name, 
             sorter: Table.SortBy.string(p => p.name),
-            isKey:true,
         },
         { key: 'subs', 
             header: 'Topic', 
-            content: p => new Intl.NumberFormat().format( p.subs), 
+            content: p => formatNumber( p.subs), 
             sorter: Table.SortBy.number(p => p.subs),
-            footer: persons.map(p => p.subs).reduce((total,subs) => total+subs, 0),
+            footer: formatNumber(persons
+                .map(p => p.subs)
+                .reduce((total,subs) => total+subs, 0)
+            ),
         },
         { key: 'topic', 
             header: 'Topic',

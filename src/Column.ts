@@ -2,7 +2,7 @@ import React from "react";
 import { Sorter } from "./Sorter";
 
 export interface Column<T>{
-    /** className for the cells in this column. Applied to <col> <th> and <td> */
+    /** className for the cells in this column. Applied to <col>, <th> and <td> */
     className?: string;
     key: string;
 
@@ -19,5 +19,4 @@ export interface Column<T>{
     /** sorting function for the column - similar to the function parameter taken by Array.sort() */
     sorter?: Sorter<T>;
 
-    isKey?: boolean;
 }
