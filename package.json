@@ -1,6 +1,6 @@
 {
   "name": "@kalleguld/react-table",
-  "version": "1.1.0",
+  "version": "1.1.1",
   "description": "A <table /> for react",
   "main": "dist/index.js",
   "author": "kalleguld",

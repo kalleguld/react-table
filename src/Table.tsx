@@ -185,7 +185,7 @@ function Cell<T>(props: {
 }) {
     const {col, row} = props;
     return (
-        <td>
+        <td className={col.className}>
             {col.content(row.row, row.idx, row.sidx)}
         </td>
     );
@@ -199,7 +199,11 @@ function Footers<T>(props:{
     return (
         <tfoot>
             <tr>
-                {props.cols.map(col => <td key={col.key}>{col.footer}</td>)}
+                {props.cols.map(col => (
+                    <td key={col.key} className={col.className}>
+                        {col.footer}
+                    </td>
+                ))}
             </tr>
         </tfoot>
     );
