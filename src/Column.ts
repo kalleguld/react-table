@@ -8,9 +8,11 @@ export interface Column<T>{
     /** The column key. Should be unique across a table. */
     key: number|string;
 
-    /** Provides content for a cell, 
-     * based on the rowdata and the original index of the row (before sorting). */
-    content: (t: T, index: number) => React.ReactNode,
+    /** Provides content for a cell.
+     * @param t The row.
+     * @param index The index of the row, before sorting.
+     * @param sortedIndex The index of the row, after sorting. */
+    content: (t: T, index: number, sortedIndex: number) => React.ReactNode,
 
     /** Table header for the column */
     header?: React.ReactNode;

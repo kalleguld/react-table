@@ -7,6 +7,7 @@ import type { SortState } from "./SortState";
 interface RowWithIndex<T>{
     row:T;
     idx:number;
+    sidx: number;
 }
 type RowKeyFunc<T> = (row: RowWithIndex<T>) => string|number;
 
@@ -19,7 +20,7 @@ export function Table<T>(props: Props<T>) {
     } = props;
 
     const rowKey = ((props.rowKey)
-        ? ((row: RowWithIndex<T>) => props.rowKey!(row.row, row.idx)) 
+        ? ((row: RowWithIndex<T>) => props.rowKey!(row.row, row.idx, row.sidx)) 
         : ((row: RowWithIndex<T>) => row.idx));
 
     const internalSortState = useProp<SortState>();
@@ -27,7 +28,7 @@ export function Table<T>(props: Props<T>) {
 
     //number rows, so we have their original index before sorting
     const numberedRows: RowWithIndex<T>[] = useMemo(() => {
-        return rows.map((row, idx) => ({row, idx}));
+        return rows.map((row, idx) => ({row, idx, sidx: idx}));
     },[rows]);
 
     const sortedRows = useMemo(() => {
@@ -45,7 +46,9 @@ export function Table<T>(props: Props<T>) {
         
         const result = [...numberedRows];
         result.sort((a, b) => actualSorter(a.row, b.row));
-        return result;
+
+        const numberedResult = result.map((r, sidx) => ({...r, sidx}));
+        return numberedResult;
         
     }, [cols, numberedRows, sortState.value]);
 
@@ -180,9 +183,10 @@ function Cell<T>(props: {
     col: Column<T>, 
     row: RowWithIndex<T>
 }) {
+    const {col, row} = props;
     return (
         <td>
-            {props.col.content(props.row.row, props.row.idx)}
+            {col.content(row.row, row.idx, row.sidx)}
         </td>
     );
 }
