@@ -1,6 +1,6 @@
 {
   "name": "@kalleguld/react-table",
-  "version": "0.2.2",
+  "version": "0.2.3",
   "description": "A <table /> for react",
   "main": "dist/index.js",
   "author": "kalleguld",
@@ -11,7 +11,7 @@
   },
   "scripts": {
     "test": "jest --passWithNoTests",
-    "build": "rm -rf ./dist/* && tsc && cp ./src/table.css ./dist/",
+    "build": "rm -rf ./dist/* && tsc && cp -r ./src/include/* ./dist/",
     "prepack": "npm run build"
   },
   "dependencies": {

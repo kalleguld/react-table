@@ -4,20 +4,29 @@ import type { Column } from "./Column";
 import type { Props } from "./Props";
 import type { SortState } from "./SortState";
 
+interface RowWithIndex<T>{
+    row:T;
+    idx:number;
+}
+type RowKeyFunc<T> = (row: RowWithIndex<T>) => string|number;
+
 export function Table<T>(props: Props<T>){
 
     const {
         cols,
         rows,
-        rowKey,
         ...rest
     } = props;
+
+    const rowKey = ((props.rowKey)
+        ? ((row: RowWithIndex<T>) => props.rowKey!(row.row)) 
+        : ((row: RowWithIndex<T>) => row.idx));
 
     const internalSortState = useProp<SortState>();
     const sortState = props.sortState ?? internalSortState;
 
     //number rows, so we have their original index before sorting
-    const numberedRows = useMemo(() => {
+    const numberedRows: RowWithIndex<T>[] = useMemo(() => {
         return rows.map((row, idx) => ({row, idx}));
     },[rows]);
 
@@ -42,43 +51,58 @@ export function Table<T>(props: Props<T>){
     return (
         <table {...rest}>
             
-            {getCols(cols)}
+            <Cols cols={cols} />
 
-            {getHeaders(cols, sortState)}
+            <Headers cols={cols} sortState={sortState} />
 
-            {getRows(cols, sortedRows, rowKey)}
+            <Rows cols={cols} sortedRows={sortedRows} rowKey={rowKey} />
 
-            {getFooters(cols)}
+            <Footers cols={cols} />
 
         </table>
     );
 }
-function getCols<T>(cols: Column<T>[]): React.ReactNode {
+function Cols<T>(props: {cols: Column<T>[]}) {
     return (
         <colgroup>
-            {cols.map(getCol)}
+            {props.cols.map(c => <Col col={c} key={c.key} />)}
         </colgroup>
     )
 }
 
-function getCol<T>(col: Column<T>): React.ReactNode{
-    return (<col className={col.className} />);
+function Col<T>(props:{col: Column<T>}) {
+    return (<col className={props.col.className} />);
 }
 
-function getHeaders<T>(cols: Column<T>[], sortState: Prop<SortState|undefined>){
-    if (!cols.some(col => col.header))
-        return; //don't do a header row if there are no headers
+function Headers<T>(props: {cols: Column<T>[], sortState: Prop<SortState|undefined>}) {
+    if (!props.cols.some(col => col.header))
+        return null; //don't do a header row if there are no headers
 
     return (
         <thead>
             <tr>
-                {cols.map((col, idx) => getHeader(col, idx, sortState))}
+                {props.cols.map((col, idx) => 
+                    <Header col={col} 
+                        idx={idx} 
+                        sortState={props.sortState}
+                        key={col.key}
+                    />
+                )}
             </tr>
         </thead>
     )
 }
 
-function getHeader<T>(col: Column<T>, idx: number, sortState: Prop<SortState|undefined>){
+function Header<T>(props: {
+    col: Column<T>, 
+    idx: number, 
+    sortState: Prop<SortState|undefined>
+}){
+    const {
+        col,
+        idx,
+        sortState
+    } = props;
     const classes: string[] = [];
     if (col.className){
         classes.push(col.className);
@@ -116,43 +140,64 @@ function sortBy<T>(col: Column<T>, idx: number, sortState: Prop<SortState | unde
         });
     }
 }
-function getRows<T>(
+
+function Rows<T>(props: {
     cols: Column<T>[], 
-    sortedRows: {row:T, idx:number}[], 
-    rowKey?: (t: T) => string | number
-): React.ReactNode {
+    sortedRows: RowWithIndex<T>[], 
+    rowKey: RowKeyFunc<T>
+}) {
+    const {cols, rowKey} = props;
     return (
         <tbody>
-            {sortedRows.map(r => getRow(cols, r.row, r.idx, rowKey ? rowKey(r.row) : r.idx))}
+            {props.sortedRows.map(r => 
+                <Row cols={cols} row={r} key={rowKey(r)} />
+            )}
         </tbody>
     );
 }
 
 
 
-function getRow<T>(cols: Column<T>[], row: T, rowIndex: number, key: string|number): React.ReactNode{
+function Row<T>(props: {
+    cols: Column<T>[], 
+    row: RowWithIndex<T>
+}) {
+    const {
+        cols,
+        row
+    } = props;
     return (
-        <tr key={key}>
-            {cols.map(col => getCell(col, row, rowIndex))}
+        <tr>
+            {cols.map(col => 
+                <Cell col={col} 
+                    row={row}
+                    key={col.key} 
+                />
+            )}
         </tr>
     );
 }
 
-function getCell<T>(col: Column<T>, row: T, rowIndex: number): any {
+function Cell<T>(props: {
+    col: Column<T>, 
+    row: RowWithIndex<T>
+}) {
     return (
-        <td key={col.key}>
-            {col.content(row, rowIndex)}
+        <td>
+            {props.col.content(props.row.row, props.row.idx)}
         </td>
     );
 }
 
-function getFooters<T>(cols: Column<T>[]): React.ReactNode {
-    if (!cols.some(col => col.footer))
-        return;
+function Footers<T>(props:{ 
+    cols: Column<T>[]
+}) {
+    if (!props.cols.some(col => col.footer))
+        return null;
     return (
         <tfoot>
             <tr>
-                {cols.map(col => <td>{col.footer}</td>)}
+                {props.cols.map(col => <td key={col.key}>{col.footer}</td>)}
             </tr>
         </tfoot>
     );
