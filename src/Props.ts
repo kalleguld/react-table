@@ -11,8 +11,11 @@ export interface Props<T> extends React.TableHTMLAttributes<HTMLTableElement> {
     rows: T[];
 
     /** A function specifying the key for a row. If not defined,
-     *  the row index is used for the key. */
-    rowKey?: (t: T) => string|number;
+     *  the row index is used for the key. 
+     * @param t The row.
+     * @param idx The index of the row, before sorting.
+     * */
+    rowKey?: (t: T, idx: number) => string|number;
 
     /** The current sort state for the table. 
      * If not defined, the state is kept internally. */

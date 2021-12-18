@@ -10,7 +10,7 @@ interface RowWithIndex<T>{
 }
 type RowKeyFunc<T> = (row: RowWithIndex<T>) => string|number;
 
-export function Table<T>(props: Props<T>){
+export function Table<T>(props: Props<T>) {
 
     const {
         cols,
@@ -19,7 +19,7 @@ export function Table<T>(props: Props<T>){
     } = props;
 
     const rowKey = ((props.rowKey)
-        ? ((row: RowWithIndex<T>) => props.rowKey!(row.row)) 
+        ? ((row: RowWithIndex<T>) => props.rowKey!(row.row, row.idx)) 
         : ((row: RowWithIndex<T>) => row.idx));
 
     const internalSortState = useProp<SortState>();
@@ -34,7 +34,8 @@ export function Table<T>(props: Props<T>){
         if (!sortState.value){
             return numberedRows;
         }
-        let sorter = cols[sortState.value.colIndex]?.sorter;
+        let col = cols.find(c => c.key === sortState.value?.colKey);
+        let sorter = col?.sorter;
         if (!sorter){
             return numberedRows;
         }
@@ -81,9 +82,8 @@ function Headers<T>(props: {cols: Column<T>[], sortState: Prop<SortState|undefin
     return (
         <thead>
             <tr>
-                {props.cols.map((col, idx) => 
+                {props.cols.map(col => 
                     <Header col={col} 
-                        idx={idx} 
                         sortState={props.sortState}
                         key={col.key}
                     />
@@ -95,12 +95,10 @@ function Headers<T>(props: {cols: Column<T>[], sortState: Prop<SortState|undefin
 
 function Header<T>(props: {
     col: Column<T>, 
-    idx: number, 
     sortState: Prop<SortState|undefined>
 }){
     const {
         col,
-        idx,
         sortState
     } = props;
     const classes: string[] = [];
@@ -110,7 +108,7 @@ function Header<T>(props: {
     if (col.sorter){
         classes.push('sortable');
     }
-    if (idx === sortState.value?.colIndex){
+    if (col.key === sortState.value?.colKey){
         classes.push('sorted');
         if (sortState.value?.reverse){
             classes.push('sorted-reverse');
@@ -118,7 +116,7 @@ function Header<T>(props: {
     }
     return (
         <th className={classes.join(' ')} 
-            onClick={sortBy(col, idx, sortState)}
+            onClick={sortBy(col, sortState)}
             scope="col"
         >
             {col.header}
@@ -126,16 +124,16 @@ function Header<T>(props: {
     )
 }
 
-function sortBy<T>(col: Column<T>, idx: number, sortState: Prop<SortState | undefined>): React.MouseEventHandler<HTMLTableDataCellElement> | undefined {
+function sortBy<T>(col: Column<T>, sortState: Prop<SortState | undefined>): React.MouseEventHandler<HTMLTableDataCellElement> | undefined {
     if (!col.sorter)
     return;
 
     return (evt) => {
         evt.stopPropagation();
-        const reverse = (idx === sortState.value?.colIndex 
+        const reverse = (col.key === sortState.value?.colKey 
             && !sortState.value?.reverse);
         sortState.set({
-            colIndex: idx,
+            colKey: col.key,
             reverse: reverse,
         });
     }

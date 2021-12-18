@@ -1,6 +1,6 @@
 {
   "name": "@kalleguld/react-table",
-  "version": "0.2.3",
+  "version": "1.0.0",
   "description": "A <table /> for react",
   "main": "dist/index.js",
   "author": "kalleguld",
@@ -15,7 +15,7 @@
     "prepack": "npm run build"
   },
   "dependencies": {
-    "@kalleguld/react-props": "^1.0.20"
+    "@kalleguld/react-props": "^1.1.0"
   },
   "peerDependencies": {
     "react": ">=16.8.0",
