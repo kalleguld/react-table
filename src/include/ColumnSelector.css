@@ -1,0 +1,52 @@
+
+.column-selector{
+    display: grid;
+    grid-template-areas: "selectable buttons selected";
+    grid-template-columns: 1fr 60px 1fr;
+
+    width:100%;
+}
+
+.column-selector > .selectable-columns {
+    grid-area: selectable;
+}
+.column-selector > .buttons {
+    grid-area: buttons;
+    display: flex;
+    flex-direction: column;
+    justify-content: flex-start;
+    align-content: stretch;
+}
+.column-selector > .buttons > .spacer{
+    height: .4em;
+}
+
+.column-selector > .selected-columns {
+    grid-area: selected;
+}
+
+.column-selector > ul {
+    list-style: none;
+    margin: 0 1em;
+    padding:0;
+    cursor:pointer;
+    border-radius: 2px;
+}
+
+
+.column-selector {
+    --bg-odd: #e9e7e7;
+    --bg-even: #fff;
+    --bg-hover: #eee;
+    --bg-selected: #68c1f7;
+}
+.column-selector > ul > li {
+    background-color: var(--bg-even);
+  }
+.column-selector > ul > li:nth-of-type(2n+1):not(.selected) {
+    background-color: var(--bg-odd);
+  }
+
+.column-selector li.selected{
+    background-color: var(--bg-selected);
+}

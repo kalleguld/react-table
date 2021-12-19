@@ -1,6 +1,6 @@
 import { Prop } from "@kalleguld/react-props";
 import React from "react";
-import type { Column } from "./Column";
+import type { Column, ColumnKey } from "./Column";
 import { SortState } from "./SortState";
 
 export interface Props<T> extends React.TableHTMLAttributes<HTMLTableElement> {
@@ -21,4 +21,6 @@ export interface Props<T> extends React.TableHTMLAttributes<HTMLTableElement> {
     /** The current sort state for the table. 
      * If not defined, the state is kept internally. */
     sortState?: Prop<SortState|undefined>;
+
+    visibleColumns?: ColumnKey[];
 }

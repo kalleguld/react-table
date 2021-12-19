@@ -16,6 +16,7 @@ export function Table<T>(props: Props<T>) {
     const {
         cols,
         rows,
+        visibleColumns,
         ...rest
     } = props;
 
@@ -52,16 +53,24 @@ export function Table<T>(props: Props<T>) {
         
     }, [cols, numberedRows, sortState.value]);
 
+    const visibleCols = useMemo(() => {
+        if (!visibleColumns)
+            return cols;
+        return visibleColumns
+            .map(key => cols.find(col => col.key === key))
+            .filter(col => !!col) as Column<T>[];
+    }, [cols, visibleColumns]);
+
     return (
         <table {...rest}>
             
-            <Cols cols={cols} />
+            <Cols cols={visibleCols} />
 
-            <Headers cols={cols} sortState={sortState} />
+            <Headers cols={visibleCols} sortState={sortState} />
 
-            <Rows cols={cols} sortedRows={sortedRows} rowKey={rowKey} />
+            <Rows cols={visibleCols} sortedRows={sortedRows} rowKey={rowKey} />
 
-            <Footers cols={cols} />
+            <Footers cols={visibleCols} />
 
         </table>
     );

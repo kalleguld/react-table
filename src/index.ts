@@ -3,6 +3,8 @@ import type { Column as TableColumn } from './Column';
 import { Table as _Table } from './Table';
 import { SortBy } from './sortBy';
 
+export { ColumnSelector } from './ColumnSelector'
+
 export module Table {
     export type Props<T> = TableProps<T>;
     export type Column<T> = TableColumn<T>;
