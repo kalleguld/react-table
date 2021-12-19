@@ -65,6 +65,7 @@ export function ColumnSelector(props: {
                     <li key={col.key}
                         className={selectedCol1.value === col.key ? 'selected' : ''}
                         onClick={() => selectedCol1.set(col.key)}
+                        onDoubleClick={() => addCol()}
                     >
                         {col.header ?? col.key}
                     </li>
@@ -110,6 +111,7 @@ export function ColumnSelector(props: {
                     <li key={idx} 
                         className={idx === selectedCol2.value ? 'selected' : ''}
                         onClick={() => selectedCol2.set(idx)}
+                        onDoubleClick={() => removeCol()}
                     >
                         {col.header ?? col.key}
                     </li>
