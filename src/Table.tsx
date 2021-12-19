@@ -78,7 +78,10 @@ export function Table<T>(props: Props<T>) {
 function Cols<T>(props: {cols: Column<T>[]}) {
     return (
         <colgroup>
-            {props.cols.map(c => <Col col={c} key={c.key} />)}
+            {props.cols.map((c, idx) => <Col 
+                col={c} 
+                key={`${c.key}_${idx}`} 
+            />)}
         </colgroup>
     )
 }
@@ -94,10 +97,10 @@ function Headers<T>(props: {cols: Column<T>[], sortState: Prop<SortState|undefin
     return (
         <thead>
             <tr>
-                {props.cols.map(col => 
+                {props.cols.map((col, idx) => 
                     <Header col={col} 
                         sortState={props.sortState}
-                        key={col.key}
+                        key={`${col.key}_${idx}`}
                     />
                 )}
             </tr>
@@ -181,10 +184,10 @@ function Row<T>(props: {
     } = props;
     return (
         <tr>
-            {cols.map(col => 
+            {cols.map((col, idx) => 
                 <Cell col={col} 
                     row={row}
-                    key={col.key} 
+                    key={`${col.key}_${idx}`} 
                 />
             )}
         </tr>
@@ -211,8 +214,9 @@ function Footers<T>(props:{
     return (
         <tfoot>
             <tr>
-                {props.cols.map(col => (
-                    <td key={col.key} className={col.className}>
+                {props.cols.map((col, idx) => (
+                    <td key={`${col.key}_${idx}`} 
+                        className={col.className}>
                         {col.footer}
                     </td>
                 ))}
