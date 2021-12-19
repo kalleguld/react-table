@@ -127,7 +127,10 @@ function Header<T>(props: {
     )
 }
 
-function sortBy<T>(col: Column<T>, sortState: Prop<SortState | undefined>): React.MouseEventHandler<HTMLTableDataCellElement> | undefined {
+function sortBy<T>(
+    col: Column<T>, 
+    sortState: Prop<SortState | undefined>
+): React.MouseEventHandler<HTMLTableCellElement> | undefined {
     if (!col.sorter)
     return;
 
