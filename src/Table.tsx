@@ -11,6 +11,7 @@ interface RowWithIndex<T>{
 }
 type RowKeyFunc<T> = (row: RowWithIndex<T>) => string|number;
 type RowClickFunc<T> = Props<T>['onRowClick'];
+type RowClassFunc<T> = Props<T>['rowClass'];
 
 export function Table<T>(props: Props<T>) {
 
@@ -19,6 +20,7 @@ export function Table<T>(props: Props<T>) {
         rows,
         visibleColumns,
         onRowClick,
+        rowClass,
         ...rest
     } = props;
 
@@ -168,6 +170,7 @@ function Rows<T>(props: {
     sortedRows: RowWithIndex<T>[], 
     rowKey: RowKeyFunc<T>,
     onRowClick?: RowClickFunc<T>,
+    rowClass?: RowClassFunc<T>
 }) {
     const {cols, rowKey, onRowClick} = props;
     return (
@@ -189,14 +192,26 @@ function Row<T>(props: {
     cols: Column<T>[], 
     row: RowWithIndex<T>,
     onRowClick?: RowClickFunc<T>,
+    rowClass?: RowClassFunc<T>
 }) {
     const {
         cols,
         row,
         onRowClick,
+        rowClass,
     } = props;
+    
+    const classes: string[] = [];
+    if (onRowClick)
+        classes.push('clickable');
+    const customClass = rowClass?.(row.value, row.idx, row.sidx);
+    if (customClass)
+        classes.push(customClass);
+    
     return (
-        <tr onClick={evt => onRowClick?.(row.value, row.idx, row.sidx, evt)}>
+        <tr onClick={evt => onRowClick?.(row.value, row.idx, row.sidx, evt)}
+            className={classes.join(' ')}
+        >
             {cols.map((col, idx) => 
                 <Cell col={col} 
                     row={row}

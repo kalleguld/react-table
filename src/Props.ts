@@ -26,4 +26,11 @@ export interface Props<T> extends React.TableHTMLAttributes<HTMLTableElement> {
 
     /** Function that should be triggered when clicking on a row. */
     onRowClick?: (t: T, index: number, sortedIndex: number, event: React.MouseEvent<HTMLTableRowElement>) => void;
+
+    /** A function specifying the className for a row. 
+     * @param t The row.
+     * @param index The index of the row, before sorting.
+     * @param sortedIndex The index of the row, after sorting.
+     * */
+    rowClass?: (t: T, index: number, sortedIndex: number) => string;
 }

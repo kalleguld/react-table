@@ -58,6 +58,11 @@ table.table th.sortable.sorted:not(.sorted-reverse) {
   cursor: n-resize;
 }
 
+/* different cursor on clickable rows */
+table.table tbody td.clickable{
+  cursor: pointer;
+}
+
 /* Alternating light/dark background on alternating lines, darker line on hover */
 table.table {
   --bg-odd: #e9e7e7;
