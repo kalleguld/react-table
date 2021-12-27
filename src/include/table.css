@@ -2,17 +2,30 @@
 
 /* General formatting */
 table.table {
-  border-collapse: collapse;
+  --border: 2px solid #000;
+  border-collapse: separate; 
+  border:none;
+  border-spacing: 0;
 }
-table.table th, table.table td {
+table.table th, 
+table.table td {
   padding: .5em;
   border: solid 0px #d2d2d2;
   border-bottom-width: 1px;
 }
 
-/* Horizontal line between head, body and footer */
-table.table > :not(thead):not(:first-child){
-  border-top: 2px solid #222;
+/* Horizontal line between head, body and footer */ 
+table.table > thead th {
+    border-bottom: var(--border);
+}
+table.table > tfoot td {
+  border-top: var(--border);
+}
+
+/* Vertical line after first column */
+table.table td:first-child, 
+table.table th:first-child {
+    border-right: var(--border);
 }
 
 /* Headers */
@@ -61,3 +74,43 @@ table.table tr:hover th, table.table tr:hover td {
   background-color: var(--bg-hover);
 }
 
+
+/* Stickyness, enable with class sticky */
+/* Sticky header */
+table.sticky > thead th{
+
+  position: sticky;
+  top: 0;
+  z-index: 2;
+  background-color: white;
+}
+
+/* Sticky first col */
+table.sticky > tbody td {
+  position: relative;
+}
+table.sticky > tbody td:first-child {
+  position: sticky;
+  left: 0;
+  z-index: 2;
+}
+
+/* sticky header and footer first col */
+table.sticky > thead th:first-child {
+  position: sticky;
+  left: 0;
+  z-index: 3;
+}
+table.sticky > tfoot td:first-child {
+  position: sticky;
+  left: 0;
+  z-index: 3;
+}
+
+/* Sticky footer */
+table.sticky > tfoot td{
+  position: sticky;
+  bottom: 0;
+  z-index: 1;
+  background-color: white;
+}
