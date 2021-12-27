@@ -99,7 +99,7 @@ table.sticky > tbody td:first-child {
 table.sticky > thead th:first-child {
   position: sticky;
   left: 0;
-  z-index: 3;
+  z-index: 4;
 }
 table.sticky > tfoot td:first-child {
   position: sticky;
