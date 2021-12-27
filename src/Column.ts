@@ -1,16 +1,15 @@
 import React from "react";
 import { Sorter } from "./Sorter";
 
+export type ColumnKey = number|string;
+
 export interface ColumnDescription {
     /** The column key. Should be unique across a table. */
-    key: number|string;
+    key: ColumnKey;
 
     /** Table header for the column. */
     header?: React.ReactNode;
-
 }
-
-export type ColumnKey = number|string;
 
 export interface Column<T> extends ColumnDescription {
     /** className for the cells in this column. Applied to <col>, <th> and <td> */
