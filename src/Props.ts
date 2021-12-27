@@ -23,4 +23,7 @@ export interface Props<T> extends React.TableHTMLAttributes<HTMLTableElement> {
     sortState?: Prop<SortState|undefined>;
 
     visibleColumns?: ColumnKey[];
+
+    /** Function that should be triggered when clicking on a row. */
+    onRowClick?: (t: T, index: number, sortedIndex: number, event: React.MouseEvent<HTMLTableRowElement>) => void;
 }

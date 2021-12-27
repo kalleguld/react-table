@@ -5,11 +5,12 @@ import type { Props } from "./Props";
 import type { SortState } from "./SortState";
 
 interface RowWithIndex<T>{
-    row:T;
+    value:T;
     idx:number;
     sidx: number;
 }
 type RowKeyFunc<T> = (row: RowWithIndex<T>) => string|number;
+type RowClickFunc<T> = Props<T>['onRowClick'];
 
 export function Table<T>(props: Props<T>) {
 
@@ -17,11 +18,12 @@ export function Table<T>(props: Props<T>) {
         cols,
         rows,
         visibleColumns,
+        onRowClick,
         ...rest
     } = props;
 
     const rowKey = ((props.rowKey)
-        ? ((row: RowWithIndex<T>) => props.rowKey!(row.row, row.idx, row.sidx)) 
+        ? ((row: RowWithIndex<T>) => props.rowKey!(row.value, row.idx, row.sidx)) 
         : ((row: RowWithIndex<T>) => row.idx));
 
     const internalSortState = useProp<SortState>();
@@ -29,7 +31,7 @@ export function Table<T>(props: Props<T>) {
 
     //number rows, so we have their original index before sorting
     const numberedRows: RowWithIndex<T>[] = useMemo(() => {
-        return rows.map((row, idx) => ({row, idx, sidx: idx}));
+        return rows.map((row, idx) => ({value: row, idx, sidx: idx}));
     },[rows]);
 
     const sortedRows = useMemo(() => {
@@ -46,7 +48,7 @@ export function Table<T>(props: Props<T>) {
             : sorter;
         
         const result = [...numberedRows];
-        result.sort((a, b) => actualSorter(a.row, b.row));
+        result.sort((a, b) => actualSorter(a.value, b.value));
 
         const numberedResult = result.map((r, sidx) => ({...r, sidx}));
         return numberedResult;
@@ -68,7 +70,11 @@ export function Table<T>(props: Props<T>) {
 
             <Headers cols={visibleCols} sortState={sortState} />
 
-            <Rows cols={visibleCols} sortedRows={sortedRows} rowKey={rowKey} />
+            <Rows cols={visibleCols} 
+                sortedRows={sortedRows} 
+                rowKey={rowKey} 
+                onRowClick={onRowClick} 
+            />
 
             <Footers cols={visibleCols} />
 
@@ -160,13 +166,18 @@ function sortBy<T>(
 function Rows<T>(props: {
     cols: Column<T>[], 
     sortedRows: RowWithIndex<T>[], 
-    rowKey: RowKeyFunc<T>
+    rowKey: RowKeyFunc<T>,
+    onRowClick?: RowClickFunc<T>,
 }) {
-    const {cols, rowKey} = props;
+    const {cols, rowKey, onRowClick} = props;
     return (
         <tbody>
             {props.sortedRows.map(r => 
-                <Row cols={cols} row={r} key={rowKey(r)} />
+                <Row cols={cols} 
+                    row={r} 
+                    key={rowKey(r)} 
+                    onRowClick={onRowClick} 
+                />
             )}
         </tbody>
     );
@@ -176,14 +187,16 @@ function Rows<T>(props: {
 
 function Row<T>(props: {
     cols: Column<T>[], 
-    row: RowWithIndex<T>
+    row: RowWithIndex<T>,
+    onRowClick?: RowClickFunc<T>,
 }) {
     const {
         cols,
-        row
+        row,
+        onRowClick,
     } = props;
     return (
-        <tr>
+        <tr onClick={evt => onRowClick?.(row.value, row.idx, row.sidx, evt)}>
             {cols.map((col, idx) => 
                 <Cell col={col} 
                     row={row}
@@ -201,7 +214,7 @@ function Cell<T>(props: {
     const {col, row} = props;
     return (
         <td className={col.className}>
-            {col.content(row.row, row.idx, row.sidx)}
+            {col.content(row.value, row.idx, row.sidx)}
         </td>
     );
 }
