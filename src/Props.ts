@@ -22,9 +22,18 @@ export interface Props<T> extends React.TableHTMLAttributes<HTMLTableElement> {
      * If not defined, the state is kept internally. */
     sortState?: Prop<SortState|undefined>;
 
+    /** A list of column keys describing the column order.
+     * If undefined, all columns are shown in their original order.
+     * Duplicate column keys are allowed.
+     */
     visibleColumns?: ColumnKey[];
 
-    /** Function that should be triggered when clicking on a row. */
+    /** Function that should be triggered when clicking on a row.
+     * @param t The row.
+     * @param index The index of the row, before sorting.
+     * @param sortedIndex The index of the row, after sorting.
+     * @param event The mouse event that was triggered.
+     *  */
     onRowClick?: (t: T, index: number, sortedIndex: number, event: React.MouseEvent<HTMLTableRowElement>) => void;
 
     /** A function specifying the className for a row. 

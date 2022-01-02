@@ -172,14 +172,14 @@ function Rows<T>(props: {
     onRowClick?: RowClickFunc<T>,
     rowClass?: RowClassFunc<T>
 }) {
-    const {cols, rowKey, onRowClick} = props;
     return (
         <tbody>
             {props.sortedRows.map(r => 
-                <Row cols={cols} 
+                <Row cols={props.cols} 
                     row={r} 
-                    key={rowKey(r)} 
-                    onRowClick={onRowClick} 
+                    key={props.rowKey(r)} 
+                    rowClass={props.rowClass}
+                    onRowClick={props.onRowClick} 
                 />
             )}
         </tbody>
