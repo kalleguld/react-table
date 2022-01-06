@@ -1,6 +1,6 @@
 {
   "name": "@kalleguld/react-table",
-  "version": "1.5.1",
+  "version": "1.5.2",
   "description": "A <table /> for react",
   "main": "dist/index.js",
   "author": "kalleguld",
@@ -25,7 +25,7 @@
       "/dist/"
     ],
     "setupFilesAfterEnv": [
-      "./setuptests.ts"
+      "./setupTests.ts"
     ]
   },
   "dependencies": {
