@@ -10,21 +10,37 @@
     "url": "https://github.com/kalleguld/react-table"
   },
   "scripts": {
-    "test": "jest --passWithNoTests",
+    "test": "jest",
     "build": "rm -rf ./dist/* && tsc && cp -r ./src/include/* ./dist/",
     "prepack": "npm run build",
     "send": "git checkout release && git merge master && git push && git checkout master"
   },
+  "jest": {
+    "testEnvironment": "jsdom",
+    "clearMocks": true,
+    "collectCoverage": true,
+    "coverageDirectory": "coverage",
+    "coveragePathIgnorePatterns": [
+      "/node_modules/",
+      "/dist/"
+    ],
+    "setupFilesAfterEnv": [
+      "./setuptests.ts"
+    ]
+  },
   "dependencies": {
-    "@kalleguld/react-props": "^2.2.2"
+    "@kalleguld/react-props": "^3.1.0"
   },
   "peerDependencies": {
     "react": ">=16.8.0",
     "react-dom": ">=16.8.0"
   },
   "devDependencies": {
+    "@babel/preset-react": "^7.16.7",
+    "@testing-library/react": "^12.1.2",
     "@babel/preset-env": "^7.16.4",
     "@babel/preset-typescript": "^7.16.0",
+    "@testing-library/jest-dom": "^5.16.1",
     "@types/jest": "^26.0.24",
     "@types/react": "^17.0.37",
     "@types/react-dom": "^17.0.11",

@@ -41,5 +41,5 @@ export interface Props<T> extends React.TableHTMLAttributes<HTMLTableElement> {
      * @param index The index of the row, before sorting.
      * @param sortedIndex The index of the row, after sorting.
      * */
-    rowClass?: (t: T, index: number, sortedIndex: number) => string;
+    rowClass?: (t: T, index: number, sortedIndex: number) => string | undefined;
 }

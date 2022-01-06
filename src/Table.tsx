@@ -21,11 +21,12 @@ export function Table<T>(props: Props<T>) {
         visibleColumns,
         onRowClick,
         rowClass,
+        rowKey,
         ...rest
     } = props;
 
-    const rowKey = ((props.rowKey)
-        ? ((row: RowWithIndex<T>) => props.rowKey!(row.value, row.idx, row.sidx)) 
+    const actualRowKey = ((rowKey)
+        ? ((row: RowWithIndex<T>) => rowKey!(row.value, row.idx, row.sidx)) 
         : ((row: RowWithIndex<T>) => row.idx));
 
     const internalSortState = useProp<SortState>();
@@ -74,8 +75,9 @@ export function Table<T>(props: Props<T>) {
 
             <Rows cols={visibleCols} 
                 sortedRows={sortedRows} 
-                rowKey={rowKey} 
+                rowKey={actualRowKey} 
                 onRowClick={onRowClick} 
+                rowClass={rowClass}
             />
 
             <Footers cols={visibleCols} />
@@ -170,7 +172,7 @@ function Rows<T>(props: {
     sortedRows: RowWithIndex<T>[], 
     rowKey: RowKeyFunc<T>,
     onRowClick?: RowClickFunc<T>,
-    rowClass?: RowClassFunc<T>
+    rowClass: RowClassFunc<T>
 }) {
     return (
         <tbody>
@@ -192,7 +194,7 @@ function Row<T>(props: {
     cols: Column<T>[], 
     row: RowWithIndex<T>,
     onRowClick?: RowClickFunc<T>,
-    rowClass?: RowClassFunc<T>
+    rowClass: RowClassFunc<T>
 }) {
     const {
         cols,
