@@ -1,15 +1,15 @@
 import React from 'react';
 import { Prop, useProp } from '@kalleguld/react-props'
 import { useMemo } from "react";
-import { ColumnDescription as Column, ColumnKey as Key } from './Column';
+import { ColumnDescription, ColumnKey } from './Column';
 
 
 export function ColumnSelector(props: {
-    columns:Column[],
-    selectedKeys: Prop<Key[]>,
+    columns:ColumnDescription[],
+    selectedKeys: Prop<ColumnKey[]>,
     allowDuplicates?: boolean,
 }) {
-    const selectedCol1 = useProp<Key>();
+    const selectedCol1 = useProp<ColumnKey>();
     const selectableCols = useMemo(() => {
         if (props.allowDuplicates)
             return props.columns;
@@ -18,8 +18,8 @@ export function ColumnSelector(props: {
             props.selectedKeys.value.indexOf(col.key) < 0);
 
     }, [props.allowDuplicates, props.columns, props.selectedKeys.value]);
-    function addCol() {
-        const key = selectedCol1.value;
+    function addCol(col?: ColumnKey) {
+        const key = col ?? selectedCol1.value;
         if (key === undefined)
             return;
         props.selectedKeys.set(
@@ -31,10 +31,10 @@ export function ColumnSelector(props: {
     const selectedCols = useMemo(() => {
         return props.selectedKeys.value
             .map(key => props.columns.find(col => col.key === key))
-            .filter(col => !!col) as Column[];
+            .filter(col => !!col) as ColumnDescription[];
     }, [props.selectedKeys.value, props.columns]);
-    function removeCol() {
-        const idx = selectedCol2.value;
+    function removeCol(colIdx?: number) {
+        const idx = colIdx ?? selectedCol2.value;
         if (idx === undefined)
             return;
         const newSelection = [...props.selectedKeys.value];
@@ -67,14 +67,14 @@ export function ColumnSelector(props: {
                         onClick={() => selectedCol1.set(col.key)}
                         onDoubleClick={evt => {
                             evt.preventDefault();
-                            addCol();
+                            addCol(col.key);
                         }}
                     >
                         {col.header ?? col.key}
                     </li>
                 ))}
             </ul>
-            <div className='buttons'>
+            <div className='buttons btn-group-vertical'>
                 <button className='btn btn-secondary'
                     disabled={selectedCol1.value === undefined}
                     onClick={() => addCol()}
@@ -116,7 +116,7 @@ export function ColumnSelector(props: {
                         onClick={() => selectedCol2.set(idx)}
                         onDoubleClick={evt => {
                             evt.preventDefault();
-                            removeCol();
+                            removeCol(idx);
                         }}
                     >
                         {col.header ?? col.key}
