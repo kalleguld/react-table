@@ -1,5 +1,5 @@
 import React from 'react';
-import { fireEvent, render } from '@testing-library/react';
+import { fireEvent, render, RenderResult } from '@testing-library/react';
 import { Column } from './Column';
 import { Table } from './Table';
 import { SortBy } from './sortBy';
@@ -10,6 +10,7 @@ type TestType = {
     name:string;
     hobbies: string[];
     birthday: Date;
+    mode:number;
 };
 
 const divTestColumns : Column<TestType>[] = [
@@ -37,6 +38,12 @@ const divTestColumns : Column<TestType>[] = [
         header: "Birthday",
         sorter: SortBy.Date(tt => tt.birthday),
     
+    },
+    {
+        key:'mode',
+        content: tt => tt.mode,
+        header: 'Mode',
+        sorter: SortBy.number(tt => tt.mode)
     }
 ];
 
@@ -45,19 +52,22 @@ const testData: TestType[] = [
         id:2,
         name:'Kasper',
         hobbies:[],
-        birthday: new Date(Date.parse('1983-04-15T09:00:00Z'))
+        birthday: new Date(Date.parse('1983-04-15T09:00:00Z')),
+        mode:2,
     },
     {
         id: 3,
         name: 'Jesper',
         hobbies:['programming'],
-        birthday: new Date(Date.parse('1984-04-15T09:00:00Z'))
+        birthday: new Date(Date.parse('1984-04-15T09:00:00Z')),
+        mode:1,
     },
     {
         id:1,
         name:'Jonathan',
         hobbies:['stealing', 'thieving', 'taking things'],
-        birthday: new Date(Date.parse('1985-04-15T09:00:00Z'))
+        birthday: new Date(Date.parse('1985-04-15T09:00:00Z')),
+        mode:2,
     }
 ];
 
@@ -83,6 +93,15 @@ test("displays data", () => {
     expect(r.queryByText("programming")).toBeTruthy();
 
 });
+
+function testOrder(r: RenderResult, expectedIds: number[]){
+    const actualIds = r.getAllByTestId('cell-id-', {exact: false});
+    for (let i = 0; i < expectedIds.length; i++) {
+        const expectedId = expectedIds[i];
+        expect(actualIds[i]).toHaveTextContent(expectedId.toString());
+    }
+    expect(actualIds.length).toEqual(expectedIds.length);
+}
 
 test("displays in given order by default", () => {
     const r = render(<Table rows={testData} cols={divTestColumns} />);
@@ -161,6 +180,41 @@ test("displays in birthday order when sorting by birthday", () => {
     expect(names.length).toEqual(3);
 });
 
+test("Displays in correct order when sorting by mode, then name", () => {
+    const r = render(<Table rows={testData} cols={divTestColumns} />);
+
+    const modeHeader = r.getByText('Mode');
+    fireEvent.click(modeHeader);
+    const nameHeader = r.getByText('Name');
+    fireEvent.click(nameHeader, {ctrlKey: true});
+
+    testOrder(r, [3,1,2]);
+});
+
+test("Displays in correct order when sorting by mode, then name twice", () => {
+    const r = render(<Table rows={testData} cols={divTestColumns} />);
+
+    const modeHeader = r.getByText('Mode');
+    fireEvent.click(modeHeader);
+    const nameHeader = r.getByText('Name');
+    fireEvent.click(nameHeader, {ctrlKey: true});
+    fireEvent.click(nameHeader, {ctrlKey: true});
+
+    testOrder(r, [3,2,1]);
+});
+
+test("Displays in correct order when sorting by mode twice, then name", () => {
+    const r = render(<Table rows={testData} cols={divTestColumns} />);
+
+    const modeHeader = r.getByText('Mode');
+    fireEvent.click(modeHeader);
+    fireEvent.click(modeHeader);
+    const nameHeader = r.getByText('Name');
+    fireEvent.click(nameHeader, {ctrlKey: true});
+
+    testOrder(r, [1,2,3]);
+});
+
 test("hides invisible columns", () => {
     const r = render(<Table 
         rows={testData} 
@@ -229,10 +283,10 @@ test('supports rowClass', () => {
         />);
     
     const jesp = r.getByTestId('cell-name-3');
-    expect(jesp.parentElement.parentElement).toHaveClass('jesp');
+    expect(jesp.parentElement!.parentElement).toHaveClass('jesp');
 
     const kasp = r.getByTestId('cell-name-2');
-    expect(kasp.parentElement.parentElement).toHaveClass('wasp');
+    expect(kasp.parentElement!.parentElement).toHaveClass('wasp');
 });
 
 test('supports column.className', () => {

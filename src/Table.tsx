@@ -41,17 +41,27 @@ export function Table<T>(props: Props<T>) {
         if (!sortState.value){
             return numberedRows;
         }
-        let col = cols.find(c => c.key === sortState.value?.colKey);
-        let sorter = col?.sorter;
-        if (!sorter){
-            return numberedRows;
-        }
-        const actualSorter = sortState.value.reverse
-            ? (a:T,b:T) => -sorter!(a,b)
-            : sorter;
+        let activeSorters = sortState.value.sorters.map(sortInfo => {
+            let col = cols.find(c => c.key === sortInfo.colKey);
+            let sorter = col?.sorter;
+            if (!sorter){
+                return (a:RowWithIndex<T>, b:RowWithIndex<T>) => a.idx - b.idx;
+            }
+            const actualSorter = sortInfo.reverse
+                ? (a:RowWithIndex<T>,b:RowWithIndex<T>) => -sorter!(a.value, b.value)
+                : (a:RowWithIndex<T>,b:RowWithIndex<T>) => sorter!(a.value, b.value);
+            return actualSorter;
+        });
         
         const result = [...numberedRows];
-        result.sort((a, b) => actualSorter(a.value, b.value));
+        result.sort((a, b) => {
+            for(let sorter of activeSorters){
+                const sorting = sorter(a, b);
+                if (sorting !== 0)
+                    return sorting;
+            }
+            return 0;
+        });
 
         const numberedResult = result.map((r, sidx) => ({...r, sidx}));
         return numberedResult;
@@ -133,9 +143,10 @@ function Header<T>(props: {
     if (col.sorter){
         classes.push('sortable');
     }
-    if (col.key === sortState.value?.colKey){
+    const colSorter = sortState.value?.sorters.find(s => s.colKey === col.key);
+    if (colSorter){
         classes.push('sorted');
-        if (sortState.value?.reverse){
+        if (colSorter.reverse){
             classes.push('sorted-reverse');
         }
     }
@@ -158,12 +169,37 @@ function sortBy<T>(
 
     return (evt) => {
         evt.stopPropagation();
-        const reverse = (col.key === sortState.value?.colKey 
-            && !sortState.value?.reverse);
-        sortState.set({
-            colKey: col.key,
-            reverse: reverse,
-        });
+        
+        let sorter = sortState.value?.sorters.find(s => s.colKey === col.key);
+        let reverse = !(sorter?.reverse ?? true);
+        if (evt.ctrlKey || evt.metaKey){
+          if (sorter){
+            const idx = sortState.value!.sorters.indexOf(sorter);
+            const newSorters = [...sortState.value!.sorters];
+            newSorters[idx] = {
+                colKey: col.key,
+                reverse
+            };
+            sortState.set({
+                sorters: newSorters
+            })
+          } 
+          else {
+            const oldSorters = sortState.value?.sorters ?? [];
+            const newSorters = [...oldSorters, {
+                colKey: col.key,
+                reverse
+            }];
+            sortState.set({
+                sorters: newSorters
+            })
+          } 
+        }
+        else {
+            sortState.set({
+                sorters:[{colKey: col.key, reverse}]
+            });
+        }
     }
 }
 
