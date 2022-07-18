@@ -6,7 +6,7 @@ A  `<table />` for React
 
 * Define a table from rows and columns.
 * Supports optional headers and footers for columns.
-* Supports sorting by a specific column.
+* Supports sorting by column, and even multiple columns.
 * Sane, optional css styling.
 * Typescript definitions.
 
