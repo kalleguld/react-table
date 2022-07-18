@@ -146,11 +146,7 @@ test("displays in ID order when sorting by ID", () => {
     const nameHeader = r.getByText('ID');
     fireEvent.click(nameHeader);
 
-    const names = r.getAllByTestId('cell-id-', {exact: false});
-    expect(names[0]).toHaveTextContent('1');
-    expect(names[1]).toHaveTextContent('2');
-    expect(names[2]).toHaveTextContent('3');
-    expect(names.length).toEqual(3);
+    testOrder(r, [1,2,3]);
 });
 
 test("displays in reverse ID order when sorting by ID twice", () => {
@@ -160,11 +156,7 @@ test("displays in reverse ID order when sorting by ID twice", () => {
     fireEvent.click(nameHeader);
     fireEvent.click(nameHeader);
 
-    const names = r.getAllByTestId('cell-id-', {exact: false});
-    expect(names[0]).toHaveTextContent('3');
-    expect(names[1]).toHaveTextContent('2');
-    expect(names[2]).toHaveTextContent('1');
-    expect(names.length).toEqual(3);
+    testOrder(r, [3,2,1]);
 });
 
 test("displays in birthday order when sorting by birthday", () => {
@@ -173,11 +165,7 @@ test("displays in birthday order when sorting by birthday", () => {
     const birthdayHeader = r.getByText('Birthday');
     fireEvent.click(birthdayHeader);
 
-    const names = r.getAllByTestId('cell-id-', {exact: false});
-    expect(names[0]).toHaveTextContent('2');
-    expect(names[1]).toHaveTextContent('3');
-    expect(names[2]).toHaveTextContent('1');
-    expect(names.length).toEqual(3);
+    testOrder(r, [2,3,1]);
 });
 
 test("Displays in correct order when sorting by mode, then name", () => {
@@ -213,6 +201,19 @@ test("Displays in correct order when sorting by mode twice, then name", () => {
     fireEvent.click(nameHeader, {ctrlKey: true});
 
     testOrder(r, [1,2,3]);
+});
+
+test("Displays in correct order when sorting by mode twice, then name twice", () => {
+    const r = render(<Table rows={testData} cols={divTestColumns} />);
+
+    const modeHeader = r.getByText('Mode');
+    fireEvent.click(modeHeader);
+    fireEvent.click(modeHeader);
+    const nameHeader = r.getByText('Name');
+    fireEvent.click(nameHeader, {ctrlKey: true});
+    fireEvent.click(nameHeader, {ctrlKey: true});
+
+    testOrder(r, [2,1,3]);
 });
 
 test("hides invisible columns", () => {
