@@ -38,8 +38,8 @@ export function PersonTable() {
             sorter: Table.SortBy.string(p => p.name),
         },
         { key: 'subs', 
-            header: 'Topic', 
-            content: p => formatNumber( p.subs), 
+            header: 'Subscribers', 
+            content: p => formatNumber(p.subs), 
             sorter: Table.SortBy.number(p => p.subs),
             footer: formatNumber(persons
                 .map(p => p.subs)
